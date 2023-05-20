@@ -22,6 +22,14 @@ function arcPadAngle(d) {
   return d && d.padAngle; // Note: optional!
 }
 
+function arcStartPadAngle(d) {
+  return d && d.startPadAngle; // Note: if d.startPadAngle not defined, then is equal to d.padAngle
+}
+
+function arcEndPadAngle(d) {
+  return d && d.endPadAngle; // Note: if d.endPadAngle not defined, then is equal to d.padAngle
+}
+
 function intersect(x0, y0, x1, y1, x2, y2, x3, y3) {
   var x10 = x1 - x0, y10 = y1 - y0,
       x32 = x3 - x2, y32 = y3 - y2,
@@ -82,6 +90,8 @@ export default function() {
       startAngle = arcStartAngle,
       endAngle = arcEndAngle,
       padAngle = arcPadAngle,
+      startPadAngle = arcStartPadAngle,
+      endPadAngle = arcEndPadAngle,
       context = null,
       path = withPath(arc);
 
@@ -122,6 +132,9 @@ export default function() {
           da0 = da,
           da1 = da,
           ap = padAngle.apply(this, arguments) / 2,
+          // need to find a way to apply different padding to a0  and a1
+          ap0 = startPadAngle.apply(this, arguments) / 2,
+          ap1 = endPadAngle.apply(this, arguments) / 2,
           rp = (ap > epsilon) && (padRadius ? +padRadius.apply(this, arguments) : sqrt(r0 * r0 + r1 * r1)),
           rc = min(abs(r1 - r0) / 2, +cornerRadius.apply(this, arguments)),
           rc0 = rc,
@@ -131,6 +144,7 @@ export default function() {
 
       // Apply padding? Note that since r1 ≥ r0, da1 ≥ da0.
       if (rp > epsilon) {
+        // not sure how to proceed down here for having two different padding.
         var p0 = asin(rp / r0 * sin(ap)),
             p1 = asin(rp / r1 * sin(ap));
         if ((da0 -= p0 * 2) > epsilon) p0 *= (cw ? 1 : -1), a00 += p0, a10 -= p0;
@@ -258,6 +272,14 @@ export default function() {
 
   arc.padAngle = function(_) {
     return arguments.length ? (padAngle = typeof _ === "function" ? _ : constant(+_), arc) : padAngle;
+  };
+  
+   arc.startPadAngle = function(_) {
+    return arguments.length ? (startPadAngle = typeof _ === "function" ? _ : constant(+_), arc) : startPadAngle;
+  };
+  
+   arc.endPadAngle = function(_) {
+    return arguments.length ? (endPadAngle = typeof _ === "function" ? _ : constant(+_), arc) : endPadAngle;
   };
 
   arc.context = function(_) {
