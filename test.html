@@ -7,14 +7,14 @@
     <body>
         padAngle = 0.08 makes it ugly but we can see the behaviour of the padding that stops when the sector is not a ring sector anymore.
         <svg >
-            
+     
         </svg>
 
         <script>
             
         // example from https://observablehq.com/@d3/arc-pad-angle
 
-        const padAngle = 0.08
+        const padAngle = 0.4// 0.08
 
         const width = 960,
         height = 500,
@@ -22,7 +22,7 @@
         innerRadius = 73.33333333333333;
 
         const data = [1, 1, 2, 3, 5, 8, 13, 21];
-        const pie1 = d3.pie().padAngle(0.03); // fixed pad angle (bad)
+        const pie1 = d3.pie().startPadAngle(0.03).endPadAngle(0); // fixed pad angle (bad)
         const pie2 = d3.pie().padAngle(padAngle); // adjusted pad angle (good)
         const arc = d3.arc().innerRadius(innerRadius).outerRadius(outerRadius); // decoration
 

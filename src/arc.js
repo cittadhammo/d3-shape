@@ -131,25 +131,26 @@ export default function() {
           a10 = a1,
           da0 = da,
           da1 = da,
-          ap = padAngle.apply(this, arguments) / 2,
-          // need to find a way to apply different padding to a0  and a1
-          ap0 = startPadAngle.apply(this, arguments) / 2,
-          ap1 = endPadAngle.apply(this, arguments) / 2,
-          rp = (ap > epsilon) && (padRadius ? +padRadius.apply(this, arguments) : sqrt(r0 * r0 + r1 * r1)),
+          ap = isNaN(padAngle.apply(this, arguments)) ? 0 : padAngle.apply(this, arguments) / 2 ,
+          aps = isNaN(startPadAngle.apply(this, arguments)) ? ap : startPadAngle.apply(this, arguments) / 2 ,
+          ape = isNaN(endPadAngle.apply(this, arguments)) ? ap : endPadAngle.apply(this, arguments) / 2 ,
+          rp = (ap > epsilon || aps > epsilon || ape > epsilon ) && (padRadius ? +padRadius.apply(this, arguments) : sqrt(r0 * r0 + r1 * r1)),
           rc = min(abs(r1 - r0) / 2, +cornerRadius.apply(this, arguments)),
           rc0 = rc,
           rc1 = rc,
           t0,
           t1;
+          
 
       // Apply padding? Note that since r1 ≥ r0, da1 ≥ da0.
       if (rp > epsilon) {
-        // not sure how to proceed down here for having two different padding.
-        var p0 = asin(rp / r0 * sin(ap)),
-            p1 = asin(rp / r1 * sin(ap));
-        if ((da0 -= p0 * 2) > epsilon) p0 *= (cw ? 1 : -1), a00 += p0, a10 -= p0;
+        var p0s = asin(rp / r0 * sin(aps)),
+            p0e = asin(rp / r0 * sin(ape)),
+            p1s = asin(rp / r1 * sin(aps)),
+            p1e = asin(rp / r1 * sin(ape));
+        if ((da0 -= p0s+p0e) > epsilon) p0s *= (cw ? 1 : -1), a00 += p0s, a10 -= p0e;
         else da0 = 0, a00 = a10 = (a0 + a1) / 2;
-        if ((da1 -= p1 * 2) > epsilon) p1 *= (cw ? 1 : -1), a01 += p1, a11 -= p1;
+        if ((da1 -= p1s+p1e) > epsilon) p1s *= (cw ? 1 : -1), a01 += p1s, a11 -= p1e;
         else da1 = 0, a01 = a11 = (a0 + a1) / 2;
       }
 
