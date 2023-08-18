@@ -3,55 +3,49 @@
         <script src="https://cdn.jsdelivr.net/npm/d3-selection@3"></script>
         <script src="https://cdn.jsdelivr.net/npm/d3-path@3"></script>
         <script src="dist/d3-shape.js"></script> <!-- contains our modify padAngle function made with rollup -->
+        <!-- to create the dist folder use :
+            
+            - npm install --global rollup
+            - rollup -c
+            - npm install --global http-server
+            - http-server
+            
+            -> navigate to test.html
+
+            - note that it is not wokring with d3.pie
+        --> 
     </head>
     <body>
-        padAngle = 0.08 makes it ugly but we can see the behaviour of the padding that stops when the sector is not a ring sector anymore.
-        <svg >
-     
+        <svg width="800" height="800">
+            <g transform="translate(400, 400)"></g>
         </svg>
 
         <script>
             
-        // example from https://observablehq.com/@d3/arc-pad-angle
+                
+        // Create an arc generator with configuration https://www.d3indepth.com/shapes/
+        var arcGenerator = d3.arc()
+            .innerRadius(100)
+            .outerRadius(200)
+            .startPadAngle(0.4)
+            .endPadAngle(0);
 
-        const padAngle = 0.4// 0.08
+        var pi =Math.PI;
 
-        const width = 960,
-        height = 500,
-        outerRadius = 220,
-        innerRadius = 73.33333333333333;
+        var arcData = [
+            {startAngle: 0, endAngle: pi/2},
+            {startAngle:pi/2, endAngle: 2*pi/2},
+            {startAngle: 2*pi/2, endAngle: 3*pi/2},
+            {startAngle: 3*pi/2, endAngle: 4*pi/2}
+        ];
 
-        const data = [1, 1, 2, 3, 5, 8, 13, 21];
-        const pie1 = d3.pie().startPadAngle(0.03).endPadAngle(0); // fixed pad angle (bad)
-        const pie2 = d3.pie().padAngle(padAngle); // adjusted pad angle (good)
-        const arc = d3.arc().innerRadius(innerRadius).outerRadius(outerRadius); // decoration
-
-        const svg = d3.select("svg")
-            .attr("viewBox", [0, -height / 2, width, height]);
-
-        const g = svg.selectAll("g")
-            .data(() => [pie1(data), pie2(data)])
-            .join("g")
-            .attr("fill", (d, i) => ["brown", "steelblue"][i])
-            .attr("transform", (d, i) => `translate(${width / 2 * (i + 0.5)})`);
-
-        g.append("g")
-            .attr("fill", "none")
-            .attr("stroke", "#777")
-            .selectAll("path")
-            .data(arcs => arcs)
-            .join("path")
-            .attr("d", arc.padAngle(0));
-
-        g.append("g")
-            .attr("stroke", "#000")
-            .attr("stroke-width", "1.5px")
-            .attr("stroke-linejoin", "round")
-            .selectAll("path")
-            .data(arcs => arcs)
-            .join("path")
-            .attr("d", arc.padAngle(padAngle));
-        
+        // Create a path element and set its d attribute
+        d3.select('g')
+            .selectAll('path')
+            .data(arcData)
+            .join('path')
+            .attr('d', arcGenerator);
+                
         </script>
     </body>
 </html>
