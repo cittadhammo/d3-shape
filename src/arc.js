@@ -18,6 +18,10 @@ function arcEndAngle(d) {
   return d.endAngle;
 }
 
+function arcGPadAngle(d) {
+  return d && d.gPadAngle; // Note: optional! Groupe Padding
+}
+
 function arcPadAngle(d) {
   return d && d.padAngle; // Note: optional!
 }
@@ -89,6 +93,7 @@ export default function() {
       padRadius = null,
       startAngle = arcStartAngle,
       endAngle = arcEndAngle,
+      gPadAngle = arcGPadAngle,
       padAngle = arcPadAngle,
       startPadAngle = arcStartPadAngle,
       endPadAngle = arcEndPadAngle,
@@ -100,15 +105,28 @@ export default function() {
         r,
         r0 = +innerRadius.apply(this, arguments),
         r1 = +outerRadius.apply(this, arguments),
+        gpa = (gPadAngle.apply(this, arguments)>epsilon) ? gPadAngle.apply(this, arguments) : 0,
         a0 = startAngle.apply(this, arguments) - halfPi,
         a1 = endAngle.apply(this, arguments) - halfPi,
         da = abs(a1 - a0),
+        c = (a1 - a0)/2,
+        e = (a1 + a0)/2,
         cw = a1 > a0;
 
     if (!context) context = buffer = path();
 
     // Ensure that the outer radius is always larger than the inner radius.
     if (r1 < r0) r = r1, r1 = r0, r0 = r;
+
+    // Calculation for Groupe Padding
+    // arc are drawn from new center, line are kept the same
+    var gr = gpa,
+      //gp = Math.sqrt(r0 * r0 + r1 * r1) * Math.sin(gpa), // padding value
+      //gr = gp / sin(c), // radial distance between centers
+      ga00 = a0 + Math.asin(gr/r0*Math.sin(c) ), // new angles 
+      ga10 = a1 - Math.asin(gr/r0*Math.sin(c)) ,
+      ga01 = a0 + Math.asin(gr/r1*Math.sin(c) ),
+      ga11 = a1 - Math.asin(gr/r1*Math.sin(c)) ;
 
     // Is it a point?
     if (!(r1 > epsilon)) context.moveTo(0, 0);
@@ -154,8 +172,10 @@ export default function() {
         else da1 = 0, a01 = a11 = (a0 + a1) / 2;
       }
 
-      var x01 = r1 * cos(a01),
+      var x01 = r1 * cos(a01), // NEEDS ATTENTION
+          gx01 = (r1+gr) * cos(ga01),
           y01 = r1 * sin(a01),
+          gy01 = (r1+gr) * sin(ga01),
           x10 = r0 * cos(a10),
           y10 = r0 * sin(a10);
 
@@ -208,7 +228,7 @@ export default function() {
       }
 
       // Or is the outer ring just a circular arc?
-      else context.moveTo(x01, y01), context.arc(0, 0, r1, a01, a11, !cw);
+      else context.moveTo(gx01, gy01), context.arc(gr*Math.sin(e), gr*Math.cos(e), r1, ga01, ga11, !cw); // MODIFICATION HERE
 
       // Is there no inner ring, and it’s a circular sector?
       // Or perhaps it’s an annular sector collapsed due to padding?
@@ -233,10 +253,10 @@ export default function() {
       }
 
       // Or is the inner ring just a circular arc?
-      else context.arc(0, 0, r0, a10, a00, cw);
+      else context.arc(gr*Math.sin(e), gr*Math.cos(e), r0+gr, ga10, ga00,cw); // MODIFICATION HERE
     }
 
-    context.closePath();
+    //context.closePath();
 
     if (buffer) return context = null, buffer + "" || null;
   }
@@ -269,6 +289,10 @@ export default function() {
 
   arc.endAngle = function(_) {
     return arguments.length ? (endAngle = typeof _ === "function" ? _ : constant(+_), arc) : endAngle;
+  };
+
+  arc.gPadAngle = function(_) {
+    return arguments.length ? (gPadAngle = typeof _ === "function" ? _ : constant(+_), arc) : gPadAngle;
   };
 
   arc.padAngle = function(_) {

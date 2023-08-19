@@ -21,22 +21,38 @@
         </svg>
 
         <script>
+
+        const r = 100, 
+        R = 300, 
+        gp = 50 ,
+        pi = Math.PI,
+        a = 0.2,
+        b = 1.5,
+        e = (a+b)/2;
             
                 
         // Create an arc generator with configuration https://www.d3indepth.com/shapes/
-        var arcGenerator = d3.arc()
-            .innerRadius(100)
-            .outerRadius(200)
-            .startPadAngle(0.4)
-            .endPadAngle(0);
+        var arcGenerator1 = d3.arc()
+        .innerRadius(r)
+        .outerRadius(R)
+        
+        var arcGenerator2 = d3.arc()
+        .innerRadius(r)
+        .outerRadius(R)
+        .gPadAngle(gp)
 
-        var pi =Math.PI;
+        var arcGenerator3 = d3.arc() 
+        .innerRadius(r)
+        .outerRadius(R)
+        .gPadAngle(gp)
+
+       // (d.cx += gr * sin(e)), (d.cy -= gr * cos(e)), (R -= gr);
 
         var arcData = [
-            {startAngle: 0, endAngle: pi/2},
-            {startAngle:pi/2, endAngle: 2*pi/2},
-            {startAngle: 2*pi/2, endAngle: 3*pi/2},
-            {startAngle: 3*pi/2, endAngle: 4*pi/2}
+            {startAngle: a, endAngle: b}
+            //{startAngle:pi/2, endAngle: 2*pi/2},
+            //{startAngle: 2*pi/2, endAngle: 3*pi/2},
+            //{startAngle: 3*pi/2, endAngle: 4*pi/2}
         ];
 
         // Create a path element and set its d attribute
@@ -44,7 +60,17 @@
             .selectAll('path')
             .data(arcData)
             .join('path')
-            .attr('d', arcGenerator);
+            .attr('d', arcGenerator1).attr('fill', 'none')
+            .attr('stroke', 'black')
+            .clone()
+            .attr('d', arcGenerator2)
+            .attr('stroke', 'blue')
+           //.clone()
+           // .attr('d', arcGenerator3)
+            //.attr('stroke', 'red')
+            //.attr("transform", `translate(${gp*Math.sin(e)},${-gp*Math.cos(e)})`);
+
+            
                 
         </script>
     </body>
