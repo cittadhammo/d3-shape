@@ -16,37 +16,51 @@
         --> 
     </head>
     <body>
-        <svg width="800" height="800">
-            <g transform="translate(400, 400)"></g>
+        <svg width="1000" height="1000">
+            <g transform="translate(500, 500)"></g>
         </svg>
 
         <script>
 
-        const r = 100, 
+        let r = 100, 
         R = 300, 
-        gp = 50 ,
+        R2 =R-50,
+        //gp = 50 ,
         pi = Math.PI,
+        cx = 0,
+        cy=0,
         a = 0.2,
-        b = 1.5,
+        b = 2,
+        c= (a-b)/2, // abs needed ?
         e = (a+b)/2;
-            
+        // gPadAngle = 3;
+        
+        // with group padding
+        // carefull this change the center of the arc and dosen't align the sector very well
+        // let gp = Math.sqrt(r * r + R * R) * Math.sin(gPadAngle),
+        let gr = 50;
+        //gr = gp / Math.sin(c);
+        if (gr != 0) (cx += gr * Math.sin(e)), (cy -= gr * Math.cos(e));   
+
                 
         // Create an arc generator with configuration https://www.d3indepth.com/shapes/
         var arcGenerator1 = d3.arc()
         .innerRadius(r)
-        .outerRadius(R)
+        .outerRadius(R);
         
         var arcGenerator2 = d3.arc()
         .innerRadius(r)
-        .outerRadius(R)
-        .gPadAngle(gp)
+        .outerRadius(R2)
+        .gR(gr);
+        //.gPadAngle(gp)
 
         var arcGenerator3 = d3.arc() 
         .innerRadius(r)
         .outerRadius(R)
-        .gPadAngle(gp)
+        .gR(gr);
 
-       // (d.cx += gr * sin(e)), (d.cy -= gr * cos(e)), (R -= gr);
+        //.gPadAngle(gp)
+
 
         var arcData = [
             {startAngle: a, endAngle: b}
@@ -65,10 +79,12 @@
             .clone()
             .attr('d', arcGenerator2)
             .attr('stroke', 'blue')
-           //.clone()
-           // .attr('d', arcGenerator3)
-            //.attr('stroke', 'red')
-            //.attr("transform", `translate(${gp*Math.sin(e)},${-gp*Math.cos(e)})`);
+            //.attr('transform', `translate(${cx},${cy})`)
+            .clone()
+            .attr('d', arcGenerator3)
+            .attr('stroke', 'red')
+            .attr('transform', 'translate(40,40)')
+            .attr('transform', `translate(${cx},${cy})`)
 
             
                 
