@@ -22,26 +22,28 @@
 
         <script>
 
-        let r = 100, 
-        R = 300, 
-        R2 =R-50,
-        //gp = 50 ,
+        let r = 150, 
+        R = R2 = 450,
         pi = Math.PI,
         cx = 0,
-        cy=0,
+        cy = 0,
         a = 0.2,
         b = 2,
-        c= (a-b)/2, // abs needed ?
-        e = (a+b)/2;
-        // gPadAngle = 3;
+        c = (b-a)/2, // abs needed ?
+        e = (a+b)/2,
+        gPadAngle = 0.05;
+
+        const gp = Math.sqrt(r * r + R * R) *  Math.sin(gPadAngle),
+        gr = gp /  Math.sin(c);
+        if  (gp != 0) (cx += gr *  Math.sin(e)), (cy -= gr *  Math.cos(e)), (R2 -= gr);
+        console.log(gr);
         
         // with group padding
         // carefull this change the center of the arc and dosen't align the sector very well
         // let gp = Math.sqrt(r * r + R * R) * Math.sin(gPadAngle),
-        let gr = 50;
-        //gr = gp / Math.sin(c);
-        if (gr != 0) (cx += gr * Math.sin(e)), (cy -= gr * Math.cos(e));   
-
+        // let gr = 50;
+        // gr = gp / Math.sin(c);
+        // (gr != 0) (cx += gr * Math.sin(e)), (cy -= gr * Math.cos(e));   
                 
         // Create an arc generator with configuration https://www.d3indepth.com/shapes/
         var arcGenerator1 = d3.arc()
@@ -51,14 +53,13 @@
         var arcGenerator2 = d3.arc()
         .innerRadius(r)
         .outerRadius(R2)
-        .gR(gr);
+        //.gR(gr);
         //.gPadAngle(gp)
 
         var arcGenerator3 = d3.arc() 
         .innerRadius(r)
-        .outerRadius(R)
+        .outerRadius(R2)
         .gR(gr);
-
         //.gPadAngle(gp)
 
 
@@ -79,12 +80,12 @@
             .clone()
             .attr('d', arcGenerator2)
             .attr('stroke', 'blue')
-            //.attr('transform', `translate(${cx},${cy})`)
+            .attr('transform', `translate(${cx},${cy})`)
             .clone()
             .attr('d', arcGenerator3)
             .attr('stroke', 'red')
-            .attr('transform', 'translate(40,40)')
-            .attr('transform', `translate(${cx},${cy})`)
+            //.attr('transform', 'translate(40,40)')
+            //.attr('transform', `translate(${cx},${cy})`)
 
             
                 

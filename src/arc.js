@@ -123,9 +123,6 @@ export default function() {
     // Ensure that the outer radius is always larger than the inner radius.
     if (r1 < r0) r = r1, r1 = r0, r0 = r;
 
-    
-
-
     // Is it a point?
     if (!(r1 > epsilon)) context.moveTo(0, 0);
 
