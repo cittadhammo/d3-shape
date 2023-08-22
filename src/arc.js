@@ -164,10 +164,7 @@ export default function() {
           ga00=a0+asin(gp/gr0),
           ga10=a1-asin(gp/gr0),
           ga01=a0+asin(gp/gr1),
-          ga11=a1-asin(gp/gr1);
-
-      console.log(gr, e);
-          
+          ga11=a1-asin(gp/gr1);          
 
       // Apply padding? Note that since r1 ≥ r0, da1 ≥ da0.
       if (rp > epsilon) {
