@@ -183,10 +183,10 @@ export default function() {
           x10 = r0 * cos(a10),
           y10 = r0 * sin(a10);
 
-      context.moveTo(0+10, 0);
-      context.arc(0, 0, 10, 0, Math.PI * 2);
-      context.moveTo(gcx+20, gcy);
-      context.arc(gcx, gcy, 20, 0, Math.PI * 2);
+      // context.moveTo(0+10, 0);
+      // context.arc(0, 0, 10, 0, Math.PI * 2);
+      // context.moveTo(gcx+20, gcy);
+      // context.arc(gcx, gcy, 20, 0, Math.PI * 2);
 
       // Apply rounded corners?
       if (rc > epsilon) {
