@@ -4,15 +4,12 @@
         <script src="https://cdn.jsdelivr.net/npm/d3-path@3"></script>
         <script src="dist/d3-shape.js"></script> <!-- contains our modify padAngle function made with rollup -->
         <!-- to create the dist folder use :
-            
             - npm install --global rollup
             - rollup -c
             - npm install --global http-server
             - http-server
-            
-            -> navigate to test.html
-
-            - note that it is not wokring with d3.pie
+                -> navigate to test.html
+                - note that it is not wokring with d3.pie
         --> 
     </head>
     <body>
@@ -23,7 +20,7 @@
         <script>
 
         let r = 150, 
-        R = R2 = 450,
+        R = R2 = 400,
         pi = Math.PI,
         cx = 0,
         cy = 0,
@@ -36,15 +33,7 @@
         const gp = Math.sqrt(r * r + R * R) *  Math.sin(gPadAngle),
         gr = gp /  Math.sin(c);
         if  (gp != 0) (cx += gr *  Math.sin(e)), (cy -= gr *  Math.cos(e)), (R2 -= gr);
-        console.log(gr);
-        
-        // with group padding
-        // carefull this change the center of the arc and dosen't align the sector very well
-        // let gp = Math.sqrt(r * r + R * R) * Math.sin(gPadAngle),
-        // let gr = 50;
-        // gr = gp / Math.sin(c);
-        // (gr != 0) (cx += gr * Math.sin(e)), (cy -= gr * Math.cos(e));   
-                
+ 
         // Create an arc generator with configuration https://www.d3indepth.com/shapes/
         var arcGenerator1 = d3.arc()
         .innerRadius(r)
@@ -54,14 +43,11 @@
         .innerRadius(r)
         .outerRadius(R2)
         //.gR(gr);
-        //.gPadAngle(gp)
 
         var arcGenerator3 = d3.arc() 
-        .innerRadius(r)
+        .innerRadius(r+18)
         .outerRadius(R2)
         .gR(gr);
-        //.gPadAngle(gp)
-
 
         var arcData = [
             {startAngle: a, endAngle: b}
@@ -84,10 +70,7 @@
             .clone()
             .attr('d', arcGenerator3)
             .attr('stroke', 'red')
-            //.attr('transform', 'translate(40,40)')
-            //.attr('transform', `translate(${cx},${cy})`)
-
-            
+                       
                 
         </script>
     </body>

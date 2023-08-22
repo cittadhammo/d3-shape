@@ -115,7 +115,7 @@ export default function() {
         a1 = endAngle.apply(this, arguments) - halfPi,
         da = abs(a1 - a0),
         c = (a1 - a0)/2,
-        e = (a1 + a0)/2,
+        e = (a1 + a0+2*halfPi)/2,
         cw = a1 > a0;
 
     if (!context) context = buffer = path();
@@ -158,13 +158,15 @@ export default function() {
       // Calculation for Groupe Padding using gr
       var gcx = -gr * sin(e),
           gcy = gr * cos(e),
-          gr0 = r0+gr,
+          gr0 = r0,
           gr1 = r1+gr,
           gp= gr*sin(c),
           ga00=a0+asin(gp/gr0),
-          ga10=a1+asin(gp/gr0),
+          ga10=a1-asin(gp/gr0),
           ga01=a0+asin(gp/gr1),
-          ga11=a1+asin(gp/gr1);
+          ga11=a1-asin(gp/gr1);
+
+      console.log(gr, e);
           
 
       // Apply padding? Note that since r1 ≥ r0, da1 ≥ da0.
@@ -183,6 +185,11 @@ export default function() {
           y01 = r1 * sin(a01),
           x10 = r0 * cos(a10),
           y10 = r0 * sin(a10);
+
+      context.moveTo(0+10, 0);
+      context.arc(0, 0, 10, 0, Math.PI * 2);
+      context.moveTo(gcx+20, gcy);
+      context.arc(gcx, gcy, 20, 0, Math.PI * 2);
 
       // Apply rounded corners?
       if (rc > epsilon) {
@@ -235,7 +242,7 @@ export default function() {
       // Or is the outer ring just a circular arc?
       // else context.moveTo(x01, y01), context.arc(gr*Math.sin(e), gr*Math.cos(e), r1, ga01, ga11, !cw); // MODIFICATION 
       else if(gr==0) context.moveTo(x01, y01), context.arc(0, 0, r1, a01, a11, !cw);
-      else context.moveTo(x01, y01), context.arc(gcx, gcy, r1-gr, ga01, ga11, !cw);
+      else context.moveTo(x01, y01), context.arc(gcx, gcy, gr1, ga01, ga11, !cw);
 
       // Is there no inner ring, and it’s a circular sector?
       // Or perhaps it’s an annular sector collapsed due to padding?
@@ -261,7 +268,7 @@ export default function() {
 
       // Or is the inner ring just a circular arc?
       else if(gr==0) context.arc(0, 0, r0, a10, a00, cw);
-      else context.arc(gcx, gcy, r0-gr, ga10, ga00, cw);
+      else context.arc(gcx, gcy, gr0, ga10, ga00, cw);
       // else context.arc(gr*Math.sin(e), gr*Math.cos(e), r0+gr, ga10, ga00,cw); // MODIFICATION HERE
     }
 
