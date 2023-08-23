@@ -145,6 +145,7 @@ export default function() {
           da0 = da,
           da1 = da,
           gr = (gR.apply(this, arguments)>epsilon) ? gR.apply(this, arguments) : 0,
+          gp = (gPadAngle.apply(this, arguments)>epsilon) ? gPadAngle.apply(this, arguments) / 2 : 0,
           ap = (padAngle.apply(this, arguments)>epsilon) ? padAngle.apply(this, arguments) / 2 : 0,
           aps = (startPadAngle.apply(this, arguments)>epsilon) ? startPadAngle.apply(this, arguments) / 2 : ap,
           ape = (endPadAngle.apply(this, arguments)>epsilon) ? endPadAngle.apply(this, arguments) / 2 : ap,
@@ -154,6 +155,13 @@ export default function() {
           rc1 = rc,
           t0,
           t1;
+
+      // if gp is define it redefine gr
+
+      if (gp > epsilon) {
+        gp = rp *  Math.sin(gp),
+        gr = gp /  Math.sin(c);
+      }
 
       // Calculation for Groupe Padding using gr
       var gcx = -gr * sin(e),
