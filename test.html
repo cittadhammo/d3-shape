@@ -25,10 +25,10 @@
         cx = 0,
         cy = 0,
         a = 0.2,
-        b = 2,
+        b = Math.PI/2,
         c = (b-a)/2, // abs needed ?
         e = (a+b)/2,
-        gPadAngle = 0.05;
+        gPadAngle = 0.07;
 
         const gp = Math.sqrt(r * r + R * R) *  Math.sin(gPadAngle),
         gr = gp /  Math.sin(c);
@@ -45,7 +45,7 @@
         //.gR(gr);
 
         var arcGenerator3 = d3.arc() 
-        .innerRadius(r+18)
+        .innerRadius(r+20)
         .outerRadius(R2)
         .gR(gr);
 
