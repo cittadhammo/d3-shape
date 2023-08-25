@@ -1,5 +1,5 @@
 import constant from "./constant.js";
-import {abs, acos, asin, atan2, cos, epsilon, halfPi, max, min, pi, sin, sqrt, tau} from "./math.js";
+import {abs, acos, asin, atan, atan2, cos, epsilon, halfPi, max, min, pi, sin, sqrt, tau} from "./math.js";
 import {withPath} from "./path.js";
 
 function arcInnerRadius(d) {
@@ -20,6 +20,14 @@ function arcEndAngle(d) {
 
 function arcPadAngle(d) {
   return d && d.padAngle; // Note: optional!
+}
+
+function arcAltCX(d) {
+  return d && d.altCX; // Note: optional!
+}
+
+function arcAltCY(d) {
+  return d && d.altCY; // Note: optional!
 }
 
 function intersect(x0, y0, x1, y1, x2, y2, x3, y3) {
@@ -82,6 +90,8 @@ export default function() {
       startAngle = arcStartAngle,
       endAngle = arcEndAngle,
       padAngle = arcPadAngle,
+      altCX = arcAltCX,
+      altCY = arcAltCY,
       context = null,
       path = withPath(arc);
 
@@ -122,12 +132,42 @@ export default function() {
           da0 = da,
           da1 = da,
           ap = padAngle.apply(this, arguments) / 2,
+          gcx = altCX.apply(this, arguments),
+          gcy = altCY.apply(this, arguments),
           rp = (ap > epsilon) && (padRadius ? +padRadius.apply(this, arguments) : sqrt(r0 * r0 + r1 * r1)),
           rc = min(abs(r1 - r0) / 2, +cornerRadius.apply(this, arguments)),
           rc0 = rc,
           rc1 = rc,
           t0,
           t1;
+
+      // Calculation for Group Padding 
+      const ca = atan(-gcy/gcx),
+      gr = sqrt(gcx*gcx + gcy*gcy),
+      gr1 = r1 + gr,
+      gr0 = r0 + gr,
+
+      gc00 = asin(cos(ca+a0)/gr0),
+      gb00 = 3*halfPi-ca-a0-gc00,
+      ga00 = halfPi - gb00 - ca, // extra halfPi
+
+      gc01 = asin(cos(ca+a0)/gr1),
+      gb01 = 3*halfPi-ca-a0-gc01, 
+      ga01 = halfPi - gb01 - ca, // extra halfPi
+      
+      gc10 = asin(cos(ca+a1)/gr0),
+      gb10 = 3*halfPi-ca-a1-gc10,
+      ga10 = halfPi - gb10 - ca, // extra halfPi
+
+      gc11 = asin(cos(ca+a1)/gr1),
+      gb11 = 3*halfPi-ca-a1-gc11,
+      ga11 = halfPi - gb11 - ca, // extra halfPi
+
+      ga01x = gr1 * sin(gb01 +ca) +gcx, // extra halfPi
+      ga01y = gr1 * +cos(gb01 +ca) +gcy; // extra halfPi
+                 
+      if (gcx && gcy) context.moveTo(gcx+20, gcy),context.arc(gcx, gcy, 20, 0, Math.PI * 2);
+      else context.moveTo(0+10, 0),context.arc(0, 0, 10, 0, Math.PI * 2);
 
       // Apply padding? Note that since r1 ≥ r0, da1 ≥ da0.
       if (rp > epsilon) {
@@ -193,6 +233,8 @@ export default function() {
       }
 
       // Or is the outer ring just a circular arc?
+      //else context.moveTo(x01, y01), context.arc(0, 0, r1, a01, a11, !cw);
+      else if(gcx && gcy) context.moveTo(0,0), context.lineTo(ga01x, ga01y), context.arc(gcx, gcy, gr1, ga01, ga11, !cw);
       else context.moveTo(x01, y01), context.arc(0, 0, r1, a01, a11, !cw);
 
       // Is there no inner ring, and it’s a circular sector?
@@ -218,6 +260,8 @@ export default function() {
       }
 
       // Or is the inner ring just a circular arc?
+      //else context.arc(0, 0, r0, a10, a00, cw);
+      else if(gcx && gcy) context.arc(gcx, gcy, gr0, ga10, ga00, cw);
       else context.arc(0, 0, r0, a10, a00, cw);
     }
 
@@ -260,6 +304,14 @@ export default function() {
     return arguments.length ? (padAngle = typeof _ === "function" ? _ : constant(+_), arc) : padAngle;
   };
 
+  arc.altCX = function(_) {
+    return arguments.length ? (altCX = typeof _ === "function" ? _ : constant(+_), arc) : altCX;
+  };
+
+  arc.altCY = function(_) {
+    return arguments.length ? (altCY = typeof _ === "function" ? _ : constant(+_), arc) : altCY;
+  };
+  
   arc.context = function(_) {
     return arguments.length ? ((context = _ == null ? null : _), arc) : context;
   };

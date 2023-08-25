@@ -1,0 +1,84 @@
+<html>
+    <head>
+        <script src="https://cdn.jsdelivr.net/npm/d3-selection@3"></script>
+        <script src="https://cdn.jsdelivr.net/npm/d3-path@3"></script>
+        <script src="dist/d3-shape.js"></script> <!-- contains our modify padAngle function made with rollup -->
+        <!-- to create the dist folder use :
+            - npm install --global rollup
+            - rollup -c
+            - npm install --global http-server
+            - http-server
+                -> navigate to test.html
+                - note that it is not wokring with d3.pie
+        --> 
+    </head>
+    <body>
+        <svg width="1500" height="1000">
+            <g transform="translate(750, 500)"></g>
+        </svg>
+
+        <script>
+
+        const r = 150, 
+        R = 400,
+        pi = Math.PI,
+        cx = 0,
+        cy = 0,
+        a = -0.2,
+        b = 0.4,
+        gcx = -120,
+        gcy = 60;
+
+        // Create an arc generator with configuration https://www.d3indepth.com/shapes/
+        var arcGenerator1 = d3.arc()
+        .innerRadius(r)
+        .outerRadius(R);
+        
+        var arcGenerator2 = d3.arc()
+        .innerRadius(r)
+        .outerRadius(R)
+        .altCX(gcx)
+        .altCY(gcy);
+
+        var arcGenerator3 = d3.arc() 
+        .innerRadius(r)
+        .outerRadius(R);
+
+        var arcData = [
+            {startAngle: a, endAngle: b}
+            //{startAngle:pi/2, endAngle: 2*pi/2},
+            //{startAngle: 2*pi/2, endAngle: 3*pi/2},
+            //{startAngle: 3*pi/2, endAngle: 4*pi/2}
+        ];
+
+        // Create a path element and set its d attribute
+        d3.select('g')
+            .selectAll('path')
+            .data(arcData)
+            .join('path')
+            .attr('d', arcGenerator1)
+            .attr('fill', 'none')
+            .attr('stroke', 'black')
+            .clone()
+            .attr('d', arcGenerator2)
+            .attr('stroke', 'blue')
+            //.attr('transform', `translate(${gcx},${gcy})`)
+
+            //.clone()
+            //.attr('d', arcGenerator3)
+            //.attr('stroke', 'red')
+                       
+        d3.select('g')
+            .append('path')
+            .attr('d', d3.line()([[-10000, 0], [10000, 0], [0, -10000], [1, 10000]]))
+            .attr('stroke', 'black')
+            .attr('fill', 'none')
+            .clone()
+            .attr('stroke', 'blue')
+            .attr('transform', `translate(${gcx},${gcy})`)
+            //.clone()
+            //.attr('stroke', 'red')
+                
+        </script>
+    </body>
+</html>
