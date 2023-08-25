@@ -1,5 +1,6 @@
 export const abs = Math.abs;
 export const atan2 = Math.atan2;
+export const atan = Math.atan;
 export const cos = Math.cos;
 export const max = Math.max;
 export const min = Math.min;
