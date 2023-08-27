@@ -13,9 +13,11 @@ export const halfPi = pi / 2;
 export const tau = 2 * pi;
 
 export function acos(x) {
-  return x > 1 ? 0 : x < -1 ? pi : Math.acos(x);
+  return Math.acos(((x+1)%2)-1);
+  //return x > 1 ? 0 : x < -1 ? pi : Math.acos(x);
 }
 
 export function asin(x) {
-  return x >= 1 ? halfPi : x <= -1 ? -halfPi : Math.asin(x);
+  return Math.asin(((x+1)%2)-1);
+  //return x >= 1 ? halfPi : x <= -1 ? -halfPi : Math.asin(x);
 }

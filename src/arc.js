@@ -146,7 +146,7 @@ export default function() {
       gr = sqrt(gcx*gcx + gcy*gcy),
       gr0 = r0 + gr,
       gr1 = r1 + gr,
-      ac = atan(gcx/gcy),
+      ac = (halfPi-atan2(gcy,gcx)), // ac prime really and atan2 save the day !
 
       gb00 = halfPi - a0 -ac,
       gc00 = asin(gr/gr0*sin(gb00)),
@@ -166,9 +166,10 @@ export default function() {
       gc11 = asin(gr/gr1*sin(gb11)),
       ga11 = halfPi-gb11-gc11-ac;
                
-      if (gcx && gcy) context.moveTo(gcx+20, gcy),context.arc(gcx, gcy, 20, 0, Math.PI * 2);
-      else context.moveTo(0+10, 0),context.arc(0, 0, 10, 0, Math.PI * 2);
-      console.log(gr, gr0, gr1, ac, gb00, gc00, ga00)
+      //if (gcx && gcy) context.moveTo(gcx+20, gcy),context.arc(gcx, gcy, 20, 0, Math.PI * 2);
+      //else context.moveTo(0+10, 0),context.arc(0, 0, 10, 0, Math.PI * 2);
+      //console.log("gr     gr0    gr1     ac    gb00      gc00     ga00")
+      //console.log(gr.toFixed(4), gr0.toFixed(4), gr1.toFixed(4), ac.toFixed(4), gb00.toFixed(4), gc00.toFixed(4), ga00.toFixed(4))
 
       // Apply padding? Note that since r1 ≥ r0, da1 ≥ da0.
       if (rp > epsilon) {
