@@ -142,32 +142,33 @@ export default function() {
           t1;
 
       // Calculation for Group Padding 
-      const ca = atan(-gcy/gcx),
+      const 
       gr = sqrt(gcx*gcx + gcy*gcy),
-      gr1 = r1 + gr,
       gr0 = r0 + gr,
+      gr1 = r1 + gr,
+      ac = atan(gcx/gcy),
 
-      gc00 = asin(cos(ca+a0)/gr0),
-      gb00 = 3*halfPi-ca-a0-gc00,
-      ga00 = halfPi - gb00 - ca, // extra halfPi
+      gb00 = halfPi - a0 -ac,
+      gc00 = asin(gr/gr0*sin(gb00)),
+      ga00 = halfPi-gb00-gc00-ac,
 
-      gc01 = asin(cos(ca+a0)/gr1),
-      gb01 = 3*halfPi-ca-a0-gc01, 
-      ga01 = halfPi - gb01 - ca, // extra halfPi
-      
-      gc10 = asin(cos(ca+a1)/gr0),
-      gb10 = 3*halfPi-ca-a1-gc10,
-      ga10 = halfPi - gb10 - ca, // extra halfPi
+      gb10 = halfPi - a1 -ac,
+      gc10 = asin(gr/gr0*sin(gb10)),
+      ga10 = halfPi-gb10-gc10-ac,
 
-      gc11 = asin(cos(ca+a1)/gr1),
-      gb11 = 3*halfPi-ca-a1-gc11,
-      ga11 = halfPi - gb11 - ca, // extra halfPi
+      gb01 = halfPi - a0 -ac,
+      gc01 = asin(gr/gr1*sin(gb01)),
+      ga01 = halfPi-gb01-gc01-ac,
+      ga01x = gcx + gr1 * cos(ga01),
+      ga01y = gcy + gr1 * sin(ga01),
 
-      ga01x = gr1 * sin(gb01 +ca) +gcx, // extra halfPi
-      ga01y = gr1 * +cos(gb01 +ca) +gcy; // extra halfPi
-                 
+      gb11 = halfPi - a1 -ac,
+      gc11 = asin(gr/gr1*sin(gb11)),
+      ga11 = halfPi-gb11-gc11-ac;
+               
       if (gcx && gcy) context.moveTo(gcx+20, gcy),context.arc(gcx, gcy, 20, 0, Math.PI * 2);
       else context.moveTo(0+10, 0),context.arc(0, 0, 10, 0, Math.PI * 2);
+      console.log(gr, gr0, gr1, ac, gb00, gc00, ga00)
 
       // Apply padding? Note that since r1 ≥ r0, da1 ≥ da0.
       if (rp > epsilon) {
@@ -234,7 +235,8 @@ export default function() {
 
       // Or is the outer ring just a circular arc?
       //else context.moveTo(x01, y01), context.arc(0, 0, r1, a01, a11, !cw);
-      else if(gcx && gcy) context.moveTo(0,0), context.lineTo(ga01x, ga01y), context.arc(gcx, gcy, gr1, ga01, ga11, !cw);
+      //else if(gcx && gcy) context.moveTo(0,0), context.lineTo(ga01x, ga01y), context.arc(gcx, gcy, gr1, ga01, ga11, !cw);
+      else if(gcx && gcy) context.moveTo(ga01x, ga01y), context.arc(gcx, gcy, gr1, ga01, ga11, !cw);
       else context.moveTo(x01, y01), context.arc(0, 0, r1, a01, a11, !cw);
 
       // Is there no inner ring, and it’s a circular sector?
